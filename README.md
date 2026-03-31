@@ -45,7 +45,7 @@ python -m srpg95tool project --help
 ### 1. 初始化项目
 
 ```powershell
-python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
+python -m srpg95tool project init <game_dir> <workspace_dir>
 ```
 
 初始化后会生成这些目录：
@@ -94,7 +94,7 @@ python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
 ### 3. 检查项目
 
 ```powershell
-python -m srpg95tool project doctor <workspace_dir> --import-mode always
+python -m srpg95tool project doctor <workspace_dir>
 ```
 
 这一步会检查：
@@ -107,7 +107,7 @@ python -m srpg95tool project doctor <workspace_dir> --import-mode always
 ### 4. 正式封包
 
 ```powershell
-python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir>
 ```
 
 构建会自动执行：
@@ -125,8 +125,8 @@ python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import
 
 ## 默认策略
 
-- 默认 `--zh-seed empty`
-- 默认 `--import-mode always`
+- 初始化默认使用空白 zh seed
+- 导入默认使用 always 模式
 - `stable-menu16` 是正式推荐的运行时 profile
 - `strong-dialogue` 仅保留为实验 / 兼容能力
 
@@ -140,9 +140,9 @@ python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import
 ## 最小可复制流程
 
 ```powershell
-python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
-python -m srpg95tool project doctor <workspace_dir> --import-mode always
-python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
+python -m srpg95tool project init <game_dir> <workspace_dir>
+python -m srpg95tool project doctor <workspace_dir>
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir>
 ```
 
 ## License
@@ -196,7 +196,7 @@ python -m srpg95tool project --help
 ### 1. Initialize a workspace
 
 ```powershell
-python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
+python -m srpg95tool project init <game_dir> <workspace_dir>
 ```
 
 The workspace contains:
@@ -245,7 +245,7 @@ Dialogue rules:
 ### 3. Validate the workspace
 
 ```powershell
-python -m srpg95tool project doctor <workspace_dir> --import-mode always
+python -m srpg95tool project doctor <workspace_dir>
 ```
 
 This checks:
@@ -258,7 +258,7 @@ This checks:
 ### 4. Build the game
 
 ```powershell
-python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir>
 ```
 
 The build flow automatically runs:
@@ -276,8 +276,8 @@ The playable output is generated at:
 
 ## Defaults
 
-- default `--zh-seed empty`
-- default `--import-mode always`
+- initialization uses the blank zh seed by default
+- import uses the `always` mode by default
 - `stable-menu16` is the formal runtime profile
 - `strong-dialogue` is experimental / compatibility-only
 
@@ -291,9 +291,9 @@ The playable output is generated at:
 ## Minimal Copyable Flow
 
 ```powershell
-python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
-python -m srpg95tool project doctor <workspace_dir> --import-mode always
-python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
+python -m srpg95tool project init <game_dir> <workspace_dir>
+python -m srpg95tool project doctor <workspace_dir>
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir>
 ```
 
 ## License
