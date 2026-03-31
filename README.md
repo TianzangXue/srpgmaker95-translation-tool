@@ -48,12 +48,6 @@ python -m srpg95tool project --help
 python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
 ```
 
-例如：
-
-```powershell
-python -m srpg95tool project init "01闇鍋企画前編" "project_01"
-```
-
 初始化后会生成这些目录：
 
 - `machine/`
@@ -103,12 +97,6 @@ python -m srpg95tool project init "01闇鍋企画前編" "project_01"
 python -m srpg95tool project doctor <workspace_dir> --import-mode always
 ```
 
-例如：
-
-```powershell
-python -m srpg95tool project doctor "project_01" --import-mode always
-```
-
 这一步会检查：
 
 - TXT 和 sidecar 是否一致
@@ -120,12 +108,6 @@ python -m srpg95tool project doctor "project_01" --import-mode always
 
 ```powershell
 python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
-```
-
-例如：
-
-```powershell
-python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
 ```
 
 构建会自动执行：
@@ -158,9 +140,9 @@ python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01
 ## 最小可复制流程
 
 ```powershell
-python -m srpg95tool project init "01闇鍋企画前編" "project_01" --zh-seed empty
-python -m srpg95tool project doctor "project_01" --import-mode always
-python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
+python -m srpg95tool project doctor <workspace_dir> --import-mode always
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
 ```
 
 ## License
@@ -217,12 +199,6 @@ python -m srpg95tool project --help
 python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
 ```
 
-Example:
-
-```powershell
-python -m srpg95tool project init "01闇鍋企画前編" "project_01"
-```
-
 The workspace contains:
 
 - `machine/`
@@ -272,12 +248,6 @@ Dialogue rules:
 python -m srpg95tool project doctor <workspace_dir> --import-mode always
 ```
 
-Example:
-
-```powershell
-python -m srpg95tool project doctor "project_01" --import-mode always
-```
-
 This checks:
 
 - TXT / sidecar consistency
@@ -289,12 +259,6 @@ This checks:
 
 ```powershell
 python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
-```
-
-Example:
-
-```powershell
-python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
 ```
 
 The build flow automatically runs:
@@ -327,9 +291,9 @@ The playable output is generated at:
 ## Minimal Copyable Flow
 
 ```powershell
-python -m srpg95tool project init "01闇鍋企画前編" "project_01" --zh-seed empty
-python -m srpg95tool project doctor "project_01" --import-mode always
-python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
+python -m srpg95tool project doctor <workspace_dir> --import-mode always
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
 ```
 
 ## License
