@@ -24,11 +24,8 @@ build_*/
 reports/
 playable_game/
 
-# Game data directories
-01闇鍋企画前編/
-02闇鍋企画完結編/
-02闇鍋企画前編easymode/
-02闇鍋企画完結編easymode/
+# Local game data directories
+/[0-9][0-9]*/
 
 # Large local-only assets
 Shaders/
