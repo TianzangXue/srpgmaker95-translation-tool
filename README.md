@@ -1,40 +1,193 @@
-# SRPG Maker 95 Translation Tool
+# SRPG Maker 95 汉化工具
 
-English | [中文](#srpg-maker-95汉化工具)
+English version is available below.
+
+## 项目简介
+
+SRPG Maker 95 汉化工具是一套基于 Python 的工作流，用于：
+
+- 解包 SRPG Maker 95 游戏目录
+- 导出可编辑的翻译 TXT
+- 将译文导回 machine 层
+- 检查编码、长度和封包风险
+- 重新封包游戏并应用正式运行时补丁
+
+这个仓库只保留工具源码和发布所需说明，不包含游戏本体、翻译工作区、构建产物或示例游戏资源。
+
+## 环境要求
+
+- Windows
+- Python 3.10+
+- `pefile`
+
+## 安装
+
+```powershell
+pip install -r requirements.txt
+```
+
+## 命令入口
+
+查看总帮助：
+
+```powershell
+python -m srpg95tool --help
+```
+
+查看 `project` 工作流帮助：
+
+```powershell
+python -m srpg95tool project --help
+```
+
+## 标准汉化流程
+
+### 1. 初始化项目
+
+```powershell
+python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
+```
+
+例如：
+
+```powershell
+python -m srpg95tool project init "01闇鍋企画前編" "project_01"
+```
+
+初始化后会生成这些目录：
+
+- `machine/`
+- `txt_src/`
+- `txt_zh/`
+- `txt_map/`
+- `reports/`
+
+其中：
+
+- `txt_src/` 是原文只读基线
+- `txt_zh/` 是正式人工输入
+
+### 2. 编辑译文
+
+只编辑：
+
+- `txt_zh/dat/*.txt`
+- `txt_zh/smap/*.txt`
+
+不要手改：
+
+- `txt_src/`
+- `txt_map/`
+- `machine/`
+
+## TXT 规则
+
+- 块分隔符固定为单独一行 `====`
+- 块顺序不能改
+- 块数量不能改
+- 可以直接写多行文本
+- 空白 `txt_zh` 块表示未翻译，不写回
+- `\0` 表示显式空字符串，会写回
+- 其它所有非空块都会被当作权威块写回
+- 即使和原文完全相同，非空块也会写回
+
+对白规则：
+
+- 第一行是说话人
+- 第二行起是正文
+- 单独一行 `\f` 表示强制分页
+
+### 3. 检查项目
+
+```powershell
+python -m srpg95tool project doctor <workspace_dir> --import-mode always
+```
+
+例如：
+
+```powershell
+python -m srpg95tool project doctor "project_01" --import-mode always
+```
+
+这一步会检查：
+
+- TXT 和 sidecar 是否一致
+- 编码是否可写回 `cp936`
+- 固定槽位是否超长
+- 对白是否会在封包时溢出
+
+### 4. 正式封包
+
+```powershell
+python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
+```
+
+例如：
+
+```powershell
+python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+```
+
+构建会自动执行：
+
+1. TXT 导入
+2. `simulate-pack`
+3. `pack`
+4. `patch-runtime --profile stable-menu16`
+
+成品游戏目录位于：
+
+```text
+<out_dir>\playable_game
+```
+
+## 默认策略
+
+- 默认 `--zh-seed empty`
+- 默认 `--import-mode always`
+- `stable-menu16` 是正式推荐的运行时 profile
+- `strong-dialogue` 仅保留为实验 / 兼容能力
+
+## 重要限制
+
+- 固定槽位 DAT 字段仍有硬长度限制
+- 超长文本会直接报错，不会静默截断
+- 长对白依赖 pack 层自动拆行 / 分页
+- 运行时正式主线以稳定性优先，不建议随意切换实验 profile
+
+## 最小可复制流程
+
+```powershell
+python -m srpg95tool project init "01闇鍋企画前編" "project_01" --zh-seed empty
+python -m srpg95tool project doctor "project_01" --import-mode always
+python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+```
+
+## License
+
+MIT License. See [LICENSE](LICENSE).
+
+---
+
+# SRPG Maker 95 Translation Tool
 
 ## Overview
 
-SRPG Maker 95 Translation Tool is a Python-based workflow for unpacking SRPG Maker 95 games, exporting editable TXT files, importing translated text, repacking game data, and applying the stable runtime patch used by the Chinese localization workflow.
+SRPG Maker 95 Translation Tool is a Python-based workflow for:
 
-This repository intentionally contains only the tool source code and documentation. It does not include game data, translation workspaces, build outputs, or sample projects.
+- unpacking SRPG Maker 95 game directories
+- exporting editable translation TXT files
+- importing translated TXT back into the machine layer
+- validating encoding, slot limits, and pack risks
+- rebuilding a playable game directory and applying the formal runtime patch
 
-## Core Capabilities
-
-- Unpack SRPG Maker 95 game directories into structured machine-readable exports
-- Export editable `txt_src/` and `txt_zh/` translation files
-- Import translated TXT back into machine catalogs
-- Validate TXT consistency, encoding, slot limits, and pack risks
-- Repack translated game data and apply the formal `stable-menu16` runtime patch
-- Generate reports for UI coverage, pack risks, runtime patching, and project builds
-
-## Repository Layout
-
-```text
-.
-├─ srpg95tool/   # Python tool source
-├─ docs/         # Chinese and English documentation
-├─ README.md
-├─ LICENSE
-├─ requirements.txt
-├─ .gitignore
-└─ .gitattributes
-```
+This repository contains the tool source code and release-facing usage instructions only. It does not include game data, translation workspaces, build outputs, or sample game assets.
 
 ## Requirements
 
-- Windows is the primary supported environment
+- Windows
 - Python 3.10+
-- `pefile` for PE inspection and runtime patching
+- `pefile`
 
 ## Installation
 
@@ -42,176 +195,143 @@ This repository intentionally contains only the tool source code and documentati
 pip install -r requirements.txt
 ```
 
-## Quick Start
+## Entry Commands
 
-Show command help:
+Show top-level help:
 
 ```powershell
 python -m srpg95tool --help
 ```
 
-Initialize a translation workspace:
+Show `project` workflow help:
+
+```powershell
+python -m srpg95tool project --help
+```
+
+## Standard Workflow
+
+### 1. Initialize a workspace
 
 ```powershell
 python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
 ```
 
-Validate a workspace:
+Example:
+
+```powershell
+python -m srpg95tool project init "01闇鍋企画前編" "project_01"
+```
+
+The workspace contains:
+
+- `machine/`
+- `txt_src/`
+- `txt_zh/`
+- `txt_map/`
+- `reports/`
+
+Meaning:
+
+- `txt_src/` is the read-only source baseline
+- `txt_zh/` is the formal human translation input
+
+### 2. Edit translations
+
+Only edit:
+
+- `txt_zh/dat/*.txt`
+- `txt_zh/smap/*.txt`
+
+Do not manually edit:
+
+- `txt_src/`
+- `txt_map/`
+- `machine/`
+
+## TXT Rules
+
+- Blocks are separated by a standalone `====` line
+- Do not change block order
+- Do not change block count
+- Multi-line text is allowed
+- Empty `txt_zh` blocks are treated as untranslated and are not written back
+- `\0` means explicit empty string and is written back
+- Any other non-empty block is treated as authoritative and written back
+- A non-empty block is still written back even if it is identical to the source
+
+Dialogue rules:
+
+- first line = speaker
+- remaining lines = body
+- a standalone `\f` line forces a page break
+
+### 3. Validate the workspace
 
 ```powershell
 python -m srpg95tool project doctor <workspace_dir> --import-mode always
 ```
 
-Build a playable output:
+Example:
+
+```powershell
+python -m srpg95tool project doctor "project_01" --import-mode always
+```
+
+This checks:
+
+- TXT / sidecar consistency
+- `cp936` write-back safety
+- fixed-slot overflows
+- dialogue layout and pack-time risks
+
+### 4. Build the game
 
 ```powershell
 python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
 ```
 
-## Formal Workflow
+Example:
 
-The formal production workflow is:
+```powershell
+python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+```
 
-1. `project init`
-2. Edit `txt_zh/`
-3. `project doctor`
-4. `project build`
+The build flow automatically runs:
 
-Formal defaults:
+1. TXT import
+2. `simulate-pack`
+3. `pack`
+4. `patch-runtime --profile stable-menu16`
 
-- `--zh-seed empty`
-- `--import-mode always`
+The playable output is generated at:
+
+```text
+<out_dir>\playable_game
+```
+
+## Defaults
+
+- default `--zh-seed empty`
+- default `--import-mode always`
 - `stable-menu16` is the formal runtime profile
-- `strong-dialogue` remains experimental / compatibility-only
+- `strong-dialogue` is experimental / compatibility-only
 
 ## Important Limits
 
-- `txt_src/` is the read-only source baseline
-- `txt_zh/` is the formal human input surface
-- Non-empty `txt_zh` blocks are authoritative and are written back even when identical to the source
 - Fixed-slot DAT fields still use hard length limits
-- Long dialogue is handled by pack-layer wrapping and pagination
+- Overflow is treated as an error; nothing is silently truncated
+- Long dialogue relies on pack-layer wrapping and pagination
+- The formal runtime path prioritizes stability over experimental dialogue behavior
 
-## Documentation
+## Minimal Copyable Flow
 
-- Chinese workflow: [docs/zh-CN/project-workflow.md](docs/zh-CN/project-workflow.md)
-- Chinese operation guide: [docs/zh-CN/operation-guide.md](docs/zh-CN/operation-guide.md)
-- Chinese project status: [docs/zh-CN/project-status.md](docs/zh-CN/project-status.md)
-- Chinese data schema: [docs/zh-CN/data-schema.md](docs/zh-CN/data-schema.md)
-- English workflow: [docs/en/project-workflow.md](docs/en/project-workflow.md)
-- English operation guide: [docs/en/operation-guide.md](docs/en/operation-guide.md)
-- English project status: [docs/en/project-status.md](docs/en/project-status.md)
-- English data schema: [docs/en/data-schema.md](docs/en/data-schema.md)
+```powershell
+python -m srpg95tool project init "01闇鍋企画前編" "project_01" --zh-seed empty
+python -m srpg95tool project doctor "project_01" --import-mode always
+python -m srpg95tool project build "01闇鍋企画前編" "project_01" "build_01" --import-mode always
+```
 
 ## License
 
-This repository is released under the MIT License. See [LICENSE](LICENSE).
-
----
-
-## SRPG Maker 95汉化工具
-
-## 概览
-
-SRPG Maker 95 汉化工具是一套基于 Python 的工作流，用于解包 SRPG Maker 95 游戏、导出可编辑 TXT、导入译文、重新封包游戏数据，并应用当前正式使用的 `stable-menu16` 运行时补丁。
-
-这个仓库只保留工具源码和文档，不包含游戏本体、翻译工作区、构建产物或示例项目。
-
-## 核心能力
-
-- 将 SRPG Maker 95 游戏目录解包为结构化 machine 导出
-- 导出可编辑的 `txt_src/` 与 `txt_zh/`
-- 将翻译后的 TXT 回写到 machine catalog
-- 检查 TXT 一致性、编码、固定槽位长度和封包风险
-- 重新封包译文游戏，并应用正式的 `stable-menu16` 运行时补丁
-- 生成 UI 覆盖、封包风险、运行时补丁和项目构建报告
-
-## 仓库结构
-
-```text
-.
-├─ srpg95tool/   # Python 工具源码
-├─ docs/         # 中英文文档
-├─ README.md
-├─ LICENSE
-├─ requirements.txt
-├─ .gitignore
-└─ .gitattributes
-```
-
-## 环境要求
-
-- 主要支持 Windows 环境
-- Python 3.10+
-- 需要 `pefile` 进行 PE 分析和运行时补丁处理
-
-## 安装依赖
-
-```powershell
-pip install -r requirements.txt
-```
-
-## 快速开始
-
-查看命令帮助：
-
-```powershell
-python -m srpg95tool --help
-```
-
-初始化翻译项目：
-
-```powershell
-python -m srpg95tool project init <game_dir> <workspace_dir> --zh-seed empty
-```
-
-检查工作区：
-
-```powershell
-python -m srpg95tool project doctor <workspace_dir> --import-mode always
-```
-
-构建可运行游戏：
-
-```powershell
-python -m srpg95tool project build <game_dir> <workspace_dir> <out_dir> --import-mode always
-```
-
-## 正式工作流
-
-当前正式生产流程是：
-
-1. `project init`
-2. 编辑 `txt_zh/`
-3. `project doctor`
-4. `project build`
-
-正式默认值：
-
-- `--zh-seed empty`
-- `--import-mode always`
-- `stable-menu16` 是正式 runtime profile
-- `strong-dialogue` 只保留为实验/兼容能力
-
-## 重要限制
-
-- `txt_src/` 是原文只读基线
-- `txt_zh/` 是正式人工输入面
-- 非空 `txt_zh` 块都是权威块，即使与原文相同也会写回
-- 固定槽位 DAT 字段仍然有硬长度限制
-- 长对白依赖 pack 层的自动拆行与分页
-
-## 文档入口
-
-- 中文工作流：[docs/zh-CN/project-workflow.md](docs/zh-CN/project-workflow.md)
-- 中文日常指南：[docs/zh-CN/operation-guide.md](docs/zh-CN/operation-guide.md)
-- 中文项目状态：[docs/zh-CN/project-status.md](docs/zh-CN/project-status.md)
-- 中文数据结构：[docs/zh-CN/data-schema.md](docs/zh-CN/data-schema.md)
-- English workflow: [docs/en/project-workflow.md](docs/en/project-workflow.md)
-- English operation guide: [docs/en/operation-guide.md](docs/en/operation-guide.md)
-- English project status: [docs/en/project-status.md](docs/en/project-status.md)
-- English data schema: [docs/en/data-schema.md](docs/en/data-schema.md)
-
-## License
-
-仓库使用 MIT License，详见 [LICENSE](LICENSE)。
+MIT License. See [LICENSE](LICENSE).
