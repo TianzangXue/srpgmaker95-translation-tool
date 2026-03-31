@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Editors / OS
+.vscode/
+.idea/
+Thumbs.db
+Desktop.ini
+
+# Local game / workspace outputs
+project_*/
+build_*/
+reports/
+playable_game/
+
+# Game data directories
+01闇鍋企画前編/
+02闇鍋企画完結編/
+02闇鍋企画前編easymode/
+02闇鍋企画完結編easymode/
+
+# Large local-only assets
+Shaders/
+srpg95-fileformat/
+SAVE*.DAT
+*.log
+*.tmp
+.tmp*/
+p*.png
+gcm-diagnose.log
+ddraw.dll
+ddraw.ini
+cnc-ddraw config.exe
+yami.json
